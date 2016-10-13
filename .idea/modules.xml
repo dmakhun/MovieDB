@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MoviesApp/MoviesApp.iml" filepath="$PROJECT_DIR$/MoviesApp/MoviesApp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MyApplication.iml" filepath="$PROJECT_DIR$/MyApplication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MoviesApp.iml" filepath="$PROJECT_DIR$/MoviesApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MoviesApp/MoviesApp-MoviesApp.iml" filepath="$PROJECT_DIR$/MoviesApp/MoviesApp-MoviesApp.iml" />
     </modules>
   </component>
 </project>
