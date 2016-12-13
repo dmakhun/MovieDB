@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 
 import java.util.List;
 
@@ -26,12 +28,14 @@ import info.movito.themoviedbapi.model.core.MovieResultsPage;
  */
 public class MovieListFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-    private List<MovieDb> popular;
+    private List<MovieDb> popularList;
+
+    private boolean loading = true;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -57,8 +61,7 @@ public class MovieListFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-        AsyncMovie asyncMovie = new AsyncMovie();
-        asyncMovie.execute(MainActivity.API_KEY);
+        new AsyncMovie().execute(MainActivity.API_KEY);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -71,16 +74,46 @@ public class MovieListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
+
         // Set the adapter
         if (view instanceof RecyclerView) {
-            Context context = view.getContext();
+            final Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
+            final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
             if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                recyclerView.setLayoutManager(linearLayoutManager);
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyMovieRecyclerViewAdapter(popular, mListener));
+            recyclerView.setAdapter(new MyMovieRecyclerViewAdapter(popularList, mListener));
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                }
+
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if(dy > 0) //check for scroll down
+                    {
+                        visibleItemCount = linearLayoutManager.getChildCount();
+                        totalItemCount = linearLayoutManager.getItemCount();
+                        pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
+
+                        if (loading)
+                        {
+                            if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
+                            {
+                                loading = false;
+                                Log.v("...", "Last Item Wow !");
+                                //Do pagination.. i.e. fetch new data
+                                System.out.println("SCROLLING");
+                            }
+                        }
+                    }
+                }
+            });
         }
         return view;
     }
@@ -108,8 +141,7 @@ public class MovieListFragment extends Fragment {
         protected String doInBackground(String... api_key) {
             TmdbMovies movies = new TmdbApi(api_key[0]).getMovies();
             MovieResultsPage movieResultsPage = movies.getPopularMovies("English", 1);
-            popular = movieResultsPage.getResults();
-            System.out.println(popular);
+            popularList = movieResultsPage.getResults();
             return movieResultsPage.toString();
         }
 

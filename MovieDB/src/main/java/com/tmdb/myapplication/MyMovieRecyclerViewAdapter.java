@@ -15,15 +15,14 @@ import info.movito.themoviedbapi.model.MovieDb;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link MovieDb} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecyclerViewAdapter.ViewHolder> {
 
-    private final List<MovieDb> mValues;
+    private final List<MovieDb> moviesList;
     private final OnListFragmentInteractionListener mListener;
 
     public MyMovieRecyclerViewAdapter(List<MovieDb> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+        moviesList = items;
         mListener = listener;
     }
 
@@ -36,9 +35,9 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.movieTitle.setText(mValues.get(position).getOriginalTitle());
-        holder.releaseDate.setText(mValues.get(position).getReleaseDate().substring(0, 4));
+        holder.mItem = moviesList.get(position);
+        holder.movieTitle.setText(moviesList.get(position).getOriginalTitle());
+        holder.releaseDate.setText(moviesList.get(position).getReleaseDate().substring(0, 4));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,7 +53,7 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return moviesList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
