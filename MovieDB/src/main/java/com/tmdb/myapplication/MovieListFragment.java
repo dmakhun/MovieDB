@@ -24,7 +24,7 @@ import info.movito.themoviedbapi.model.core.MovieResultsPage;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class MovieList extends Fragment {
+public class MovieListFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -37,13 +37,13 @@ public class MovieList extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public MovieList() {
+    public MovieListFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static MovieList newInstance(int columnCount) {
-        MovieList fragment = new MovieList();
+    public static MovieListFragment newInstance(int columnCount) {
+        MovieListFragment fragment = new MovieListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);

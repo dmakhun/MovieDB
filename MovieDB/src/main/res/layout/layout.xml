@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--    <fragment android:name="com.tmdb.myapplication.MovieList"
+    <!--    <fragment android:name="com.tmdb.myapplication.MovieListFragmentFragment"
             android:id="@id/list"
             android:layout_width="0dp"
             android:layout_height="match_parent" />-->

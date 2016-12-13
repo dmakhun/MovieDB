@@ -13,7 +13,7 @@ import info.movito.themoviedbapi.model.MovieDb;
 /**
  * Created by Dima on 05.01.2016.
  */
-public class MainActivity extends Activity implements MovieList.OnListFragmentInteractionListener{
+public class MainActivity extends Activity implements MovieListFragment.OnListFragmentInteractionListener{
 
     public static String API_KEY = "480d5ed7806eae2f698579a1af802964";
 
@@ -25,8 +25,8 @@ public class MainActivity extends Activity implements MovieList.OnListFragmentIn
 //        new AsyncMovie().execute(API_KEY);
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        MovieList movieList = new MovieList();
-        fragmentTransaction.add(R.id.list, movieList);
+        MovieListFragment movieListFragment = new MovieListFragment();
+        fragmentTransaction.add(R.id.list, movieListFragment);
         fragmentTransaction.commit();
     }
 

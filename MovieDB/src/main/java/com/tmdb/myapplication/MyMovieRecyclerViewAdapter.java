@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.tmdb.myapplication.MovieList.OnListFragmentInteractionListener;
+import com.tmdb.myapplication.MovieListFragment.OnListFragmentInteractionListener;
 
 import java.util.List;
 
@@ -37,8 +37,8 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getOriginalTitle());
-        holder.mContentView.setText(mValues.get(position).getReleaseDate().substring(0, 4));
+        holder.movieTitle.setText(mValues.get(position).getOriginalTitle());
+        holder.releaseDate.setText(mValues.get(position).getReleaseDate().substring(0, 4));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,20 +59,20 @@ public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecy
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView movieTitle;
+        public final TextView releaseDate;
         public MovieDb mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            movieTitle = (TextView) view.findViewById(R.id.movieTitle);
+            releaseDate = (TextView) view.findViewById(R.id.releaseDate);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + releaseDate.getText() + "'";
         }
     }
 }
