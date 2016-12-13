@@ -22,7 +22,6 @@ public class MainActivity extends Activity implements MovieListFragment.OnListFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout);
 
-//        new AsyncMovie().execute(API_KEY);
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         MovieListFragment movieListFragment = new MovieListFragment();
