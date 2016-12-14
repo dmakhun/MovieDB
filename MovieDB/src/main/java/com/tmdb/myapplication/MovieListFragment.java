@@ -7,13 +7,13 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
@@ -29,12 +29,14 @@ import info.movito.themoviedbapi.model.core.MovieResultsPage;
 public class MovieListFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-    private List<MovieDb> popularList;
+    private List<MovieDb> popularList = new ArrayList<>();
+    private static int i = 1;
+    MovieRecyclerViewAdapter adapter;
+//    MovieListAsyncTask movieListAsyncTask = new MovieListAsyncTask();
 
-    private boolean loading = true;
+    private boolean loading = false;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
 
     /**
@@ -61,10 +63,9 @@ public class MovieListFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-        new AsyncMovie().execute(MainActivity.API_KEY);
         try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
+            new MovieListAsyncTask().execute(1).get();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
@@ -74,7 +75,7 @@ public class MovieListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
-
+        adapter = new MovieRecyclerViewAdapter(popularList, mListener);
         // Set the adapter
         if (view instanceof RecyclerView) {
             final Context context = view.getContext();
@@ -85,7 +86,7 @@ public class MovieListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyMovieRecyclerViewAdapter(popularList, mListener));
+            recyclerView.setAdapter(adapter);
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -95,27 +96,36 @@ public class MovieListFragment extends Fragment {
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    if(dy > 0) //check for scroll down
-                    {
+                    if (dy > 0) { //check for scroll down
                         visibleItemCount = linearLayoutManager.getChildCount();
                         totalItemCount = linearLayoutManager.getItemCount();
                         pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
-
-                        if (loading)
-                        {
-                            if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
-                            {
-                                loading = false;
-                                Log.v("...", "Last Item Wow !");
-                                //Do pagination.. i.e. fetch new data
-                                System.out.println("SCROLLING");
-                            }
-                        }
+                        updateList();
                     }
                 }
             });
         }
         return view;
+    }
+
+    private void updateList() {
+        if (!loading) {
+            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                loading = true;
+                final MovieListAsyncTask listAsyncTask = new MovieListAsyncTask();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            listAsyncTask.execute(i += 1).get();
+                            loading = false;
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+        }
     }
 
     @Override
@@ -135,19 +145,21 @@ public class MovieListFragment extends Fragment {
         mListener = null;
     }
 
-    class AsyncMovie extends AsyncTask<String, Void, String> {
+    class MovieListAsyncTask extends AsyncTask<Integer, Void, String> {
 
         @Override
-        protected String doInBackground(String... api_key) {
-            TmdbMovies movies = new TmdbApi(api_key[0]).getMovies();
-            MovieResultsPage movieResultsPage = movies.getPopularMovies("English", 1);
-            popularList = movieResultsPage.getResults();
-            return movieResultsPage.toString();
+        protected String doInBackground(Integer... i) {
+            TmdbMovies movies = new TmdbApi(MDB.API_KEY).getMovies();
+            MovieResultsPage movieResultsPage = movies.getPopularMovies(MDB.LANGUAGE_DEFAULT, i[0]);
+            if (movieResultsPage != null) {
+                popularList.addAll(movieResultsPage.getResults());
+            }
+            return null;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -164,5 +176,11 @@ public class MovieListFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(MovieDb item);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+//        updateList();
     }
 }

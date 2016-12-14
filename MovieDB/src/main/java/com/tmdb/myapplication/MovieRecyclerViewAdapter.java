@@ -16,12 +16,12 @@ import info.movito.themoviedbapi.model.MovieDb;
  * {@link RecyclerView.Adapter} that can display a {@link MovieDb} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  */
-public class MyMovieRecyclerViewAdapter extends RecyclerView.Adapter<MyMovieRecyclerViewAdapter.ViewHolder> {
+public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
 
     private final List<MovieDb> moviesList;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyMovieRecyclerViewAdapter(List<MovieDb> items, OnListFragmentInteractionListener listener) {
+    public MovieRecyclerViewAdapter(List<MovieDb> items, OnListFragmentInteractionListener listener) {
         moviesList = items;
         mListener = listener;
     }
