@@ -1,4 +1,4 @@
-package com.tmdb.myapplication;
+package com.tmdb.moviedb;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -17,8 +17,16 @@ import java.util.concurrent.ExecutionException;
 
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
+import info.movito.themoviedbapi.model.Artwork;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
+
+import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.credits;
+import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.images;
+import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.releases;
+import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.reviews;
+import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.similar;
+import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.videos;
 
 /**
  * A fragment representing a list of Items.
@@ -34,7 +42,6 @@ public class MovieListFragment extends Fragment {
     private List<MovieDb> popularList = new ArrayList<>();
     private static int i = 1;
     MovieRecyclerViewAdapter adapter;
-//    MovieListAsyncTask movieListAsyncTask = new MovieListAsyncTask();
 
     private boolean loading = false;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
@@ -97,9 +104,6 @@ public class MovieListFragment extends Fragment {
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
                     if (dy > 0) { //check for scroll down
-                        visibleItemCount = linearLayoutManager.getChildCount();
-                        totalItemCount = linearLayoutManager.getItemCount();
-                        pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
                         updateList();
                     }
                 }
@@ -149,11 +153,14 @@ public class MovieListFragment extends Fragment {
 
         @Override
         protected String doInBackground(Integer... i) {
-            TmdbMovies movies = new TmdbApi(MDB.API_KEY).getMovies();
+            TmdbApi tmdbApi = new TmdbApi(MDB.API_KEY);
+            TmdbMovies movies = tmdbApi.getMovies();
             MovieResultsPage movieResultsPage = movies.getPopularMovies(MDB.LANGUAGE_DEFAULT, i[0]);
             if (movieResultsPage != null) {
                 popularList.addAll(movieResultsPage.getResults());
             }
+/*            MovieDb movie = movies.getMovie(293660, "en", credits, videos, releases, images, similar, reviews);
+            List<Artwork> images = movie.getImages();*/
             return null;
         }
 
@@ -174,13 +181,11 @@ public class MovieListFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(MovieDb item);
+        void onListFragmentInteraction(MovieDb movieDb);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        updateList();
     }
 }

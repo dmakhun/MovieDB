@@ -1,4 +1,6 @@
-package com.tmdb.myapplication;
+package com.tmdb.moviedb;
+
+import info.movito.themoviedbapi.TmdbApi;
 
 /**
  * Created by dmak on 14.12.16.

@@ -5,8 +5,8 @@ android {
     buildToolsVersion '25.0.1'
 
     defaultConfig {
-        applicationId "com.tmdb.myapplication"
-        minSdkVersion 23
+        applicationId "com.tmdb.moviedb"
+        minSdkVersion 17
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -38,5 +38,6 @@ dependencies {
     compile 'info.movito:themoviedbapi:1.4'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     testCompile 'junit:junit:4.12'
 }

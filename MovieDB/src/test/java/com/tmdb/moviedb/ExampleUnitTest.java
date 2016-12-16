@@ -1,4 +1,4 @@
-package com.tmdb.myapplication;
+package com.tmdb.moviedb;
 
 import org.junit.Test;
 

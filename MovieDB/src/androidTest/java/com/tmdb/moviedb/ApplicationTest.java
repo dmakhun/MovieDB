@@ -1,4 +1,4 @@
-package com.tmdb.myapplication;
+package com.tmdb.moviedb;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
