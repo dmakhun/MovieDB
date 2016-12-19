@@ -17,16 +17,8 @@ import java.util.concurrent.ExecutionException;
 
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
-import info.movito.themoviedbapi.model.Artwork;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
-
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.credits;
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.images;
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.releases;
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.reviews;
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.similar;
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.videos;
 
 /**
  * A fragment representing a list of Items.
@@ -153,14 +145,11 @@ public class MovieListFragment extends Fragment {
 
         @Override
         protected String doInBackground(Integer... i) {
-            TmdbApi tmdbApi = new TmdbApi(MDB.API_KEY);
-            TmdbMovies movies = tmdbApi.getMovies();
+            TmdbMovies movies = new TmdbApi(MDB.API_KEY).getMovies();
             MovieResultsPage movieResultsPage = movies.getPopularMovies(MDB.LANGUAGE_DEFAULT, i[0]);
             if (movieResultsPage != null) {
                 popularList.addAll(movieResultsPage.getResults());
             }
-/*            MovieDb movie = movies.getMovie(293660, "en", credits, videos, releases, images, similar, reviews);
-            List<Artwork> images = movie.getImages();*/
             return null;
         }
 

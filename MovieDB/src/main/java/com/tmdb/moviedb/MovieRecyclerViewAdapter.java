@@ -1,5 +1,6 @@
 package com.tmdb.moviedb;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,20 +16,7 @@ import com.tmdb.moviedb.MovieListFragment.OnListFragmentInteractionListener;
 
 import java.util.List;
 
-import info.movito.themoviedbapi.TmdbApi;
-import info.movito.themoviedbapi.Utils;
-import info.movito.themoviedbapi.model.Artwork;
-import info.movito.themoviedbapi.model.Credits;
 import info.movito.themoviedbapi.model.MovieDb;
-import info.movito.themoviedbapi.model.Multi;
-import info.movito.themoviedbapi.model.Video;
-
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.credits;
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.images;
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.releases;
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.reviews;
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.similar;
-import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.videos;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link MovieDb} and makes a call to the
@@ -39,6 +27,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
     private final OnListFragmentInteractionListener mListener;
     private ImageLoader imageLoader;
     private DisplayImageOptions options;
+    private Context context;
 
     public MovieRecyclerViewAdapter(List<MovieDb> items, OnListFragmentInteractionListener listener) {
         moviesList = items;
@@ -50,7 +39,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                 // flicker while toolbar hiding
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .imageScaleType(ImageScaleType.EXACTLY)
-                .cacheInMemory(false)
+                .cacheInMemory(true)
                 .showImageOnLoading(null)
                 .showImageForEmptyUri(null)
                 .showImageOnFail(null)
@@ -62,6 +51,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_movie, parent, false);
+        context = parent.getContext();
         return new ViewHolder(view);
     }
 
@@ -70,14 +60,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
         holder.movieDb = moviesList.get(position);
         holder.movieTitle.setText(moviesList.get(position).getOriginalTitle());
         holder.releaseDate.setText(moviesList.get(position).getReleaseDate().substring(0, 4));
-//        TmdbApi tmdbApi = new TmdbApi(MDB.API_KEY);
-
-//        String imagePath = Utils.createImageUrl(tmdbApi, moviesList.get(position).getPosterPath(), "w154").toString();
-        imageLoader.displayImage("https://image.tmdb.org/t/p/w500/kqjL17yufvn9OVLyXYpvtyrFfak.jpg", holder.posterPath, options);
-
-        List<Video> videos = moviesList.get(position).getVideos();
-        Multi.MediaType mediaTypes = moviesList.get(position).getMediaType();
-        List<Artwork> images = moviesList.get(position).getImages();
+        imageLoader.displayImage(createImageURI(position), holder.posterPath, options);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,6 +71,10 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                 }
             }
         });
+    }
+
+    private String createImageURI(int position) {
+        return MDB.imageUrl + context.getResources().getString(R.string.imageSize) + moviesList.get(position).getPosterPath();
     }
 
     @Override
