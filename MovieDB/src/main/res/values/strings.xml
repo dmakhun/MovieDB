@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MovieDB</string>
+
+    <!-- detailTabs tabs -->
+    <string-array name="detailTabs">
+        <item>Info</item>
+        <item>Cast</item>
+        <item>Overview</item>
+    </string-array>
 </resources>

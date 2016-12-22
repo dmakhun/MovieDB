@@ -1,4 +1,4 @@
-package com.tmdb.moviedb;
+package com.tmdb.moviedb.controller;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -10,6 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+
+import com.tmdb.moviedb.MDB;
+import com.tmdb.moviedb.R;
+import com.tmdb.moviedb.adapter.MovieRecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +31,7 @@ import info.movito.themoviedbapi.model.core.MovieResultsPage;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class MovieListFragment extends Fragment {
+public class MovieListFragment extends Fragment{
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
@@ -45,8 +50,6 @@ public class MovieListFragment extends Fragment {
     public MovieListFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static MovieListFragment newInstance(int columnCount) {
         MovieListFragment fragment = new MovieListFragment();
         Bundle args = new Bundle();

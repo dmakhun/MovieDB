@@ -3,9 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/movieList"
-    android:name="com.tmdb.moviedb.MovieListFragment"
+    android:name="com.tmdb.moviedb.controller.MovieListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:divider="@color/movieListDivider"
+    android:dividerHeight="1dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.tmdb.moviedb.MovieListFragment"
-    tools:listitem="@layout/fragment_movie" />
+    tools:context="com.tmdb.moviedb.controller.MovieListFragment"
+    tools:listitem="@layout/row_fragment_movie" />

@@ -1,4 +1,4 @@
-package com.tmdb.moviedb;
+package com.tmdb.moviedb.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,7 +12,9 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.tmdb.moviedb.MovieListFragment.OnListFragmentInteractionListener;
+import com.tmdb.moviedb.MDB;
+import com.tmdb.moviedb.controller.MovieListFragment.OnListFragmentInteractionListener;
+import com.tmdb.moviedb.R;
 
 import java.util.List;
 
@@ -50,7 +52,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_movie, parent, false);
+                .inflate(R.layout.row_fragment_movie, parent, false);
         context = parent.getContext();
         return new ViewHolder(view);
     }
@@ -67,6 +69,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
+                    System.out.println("v = " + v);
                     mListener.onListFragmentInteraction(holder.movieDb);
                 }
             }
@@ -82,7 +85,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
         return moviesList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final View mView;
         public final TextView movieTitle;
         public final TextView releaseDate;
@@ -95,6 +98,11 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
             movieTitle = (TextView) view.findViewById(R.id.movieTitle);
             releaseDate = (TextView) view.findViewById(R.id.releaseDate);
             posterPath = (ImageView) view.findViewById(R.id.posterPath);
+            mView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
         }
     }
 }
