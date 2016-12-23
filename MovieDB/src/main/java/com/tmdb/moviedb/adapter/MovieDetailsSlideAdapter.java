@@ -16,7 +16,6 @@ import com.tmdb.moviedb.R;
 /**
  * Created by dmak on 21.12.16.
  */
-
 public class MovieDetailsSlideAdapter extends FragmentStatePagerAdapter {
     private String[] navMenuTitles;
     /*
@@ -78,6 +77,10 @@ public class MovieDetailsSlideAdapter extends FragmentStatePagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         registeredFragments.remove(position);
         super.destroyItem(container, position, object);
+    }
+
+    public Fragment getRegisteredFragment(int position) {
+        return registeredFragments.get(position);
     }
 
 /*    @Override

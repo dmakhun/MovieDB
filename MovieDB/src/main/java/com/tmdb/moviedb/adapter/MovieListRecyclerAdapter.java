@@ -13,7 +13,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.tmdb.moviedb.MDB;
-import com.tmdb.moviedb.controller.MovieListFragment.OnListFragmentInteractionListener;
+import com.tmdb.moviedb.controller.OnFragmentInteractionListener;
 import com.tmdb.moviedb.R;
 
 import java.util.List;
@@ -22,16 +22,16 @@ import info.movito.themoviedbapi.model.MovieDb;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link MovieDb} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link OnFragmentInteractionListener}.
  */
-public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
+public class MovieListRecyclerAdapter extends RecyclerView.Adapter<MovieListRecyclerAdapter.ViewHolder> {
     private final List<MovieDb> moviesList;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnFragmentInteractionListener mListener;
     private ImageLoader imageLoader;
     private DisplayImageOptions options;
     private Context context;
 
-    public MovieRecyclerViewAdapter(List<MovieDb> items, OnListFragmentInteractionListener listener) {
+    public MovieListRecyclerAdapter(List<MovieDb> items, OnFragmentInteractionListener listener) {
         moviesList = items;
         mListener = listener;
 
@@ -69,8 +69,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    System.out.println("v = " + v);
-                    mListener.onListFragmentInteraction(holder.movieDb);
+                    mListener.onFragmentInteraction("MovieDetailsFragment", holder.movieDb);
                 }
             }
         });
@@ -85,7 +84,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
         return moviesList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView movieTitle;
         public final TextView releaseDate;
@@ -98,11 +97,6 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
             movieTitle = (TextView) view.findViewById(R.id.movieTitle);
             releaseDate = (TextView) view.findViewById(R.id.releaseDate);
             posterPath = (ImageView) view.findViewById(R.id.posterPath);
-            mView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
         }
     }
 }

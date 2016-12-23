@@ -4,17 +4,17 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.tmdb.moviedb.MDB;
 import com.tmdb.moviedb.R;
-import com.tmdb.moviedb.adapter.MovieRecyclerViewAdapter;
+import com.tmdb.moviedb.adapter.MovieListRecyclerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,17 +28,17 @@ import info.movito.themoviedbapi.model.core.MovieResultsPage;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class MovieListFragment extends Fragment{
+public class MovieListFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener;
     private List<MovieDb> popularList = new ArrayList<>();
     private static int i = 1;
-    MovieRecyclerViewAdapter adapter;
+    MovieListRecyclerAdapter adapter;
 
     private boolean loading = false;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
@@ -77,7 +77,7 @@ public class MovieListFragment extends Fragment{
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
-        adapter = new MovieRecyclerViewAdapter(popularList, mListener);
+        adapter = new MovieListRecyclerAdapter(popularList, mListener);
         // Set the adapter
         if (view instanceof RecyclerView) {
             final Context context = view.getContext();
@@ -103,6 +103,9 @@ public class MovieListFragment extends Fragment{
                     }
                 }
             });
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                    linearLayoutManager.getOrientation());
+            recyclerView.addItemDecoration(dividerItemDecoration);
         }
         return view;
     }
@@ -130,11 +133,11 @@ public class MovieListFragment extends Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -145,7 +148,6 @@ public class MovieListFragment extends Fragment{
     }
 
     class MovieListAsyncTask extends AsyncTask<Integer, Void, String> {
-
         @Override
         protected String doInBackground(Integer... i) {
             TmdbMovies movies = new TmdbApi(MDB.API_KEY).getMovies();
@@ -160,20 +162,6 @@ public class MovieListFragment extends Fragment{
         protected void onPostExecute(String s) {
             adapter.notifyDataSetChanged();
         }
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(MovieDb movieDb);
     }
 
     @Override

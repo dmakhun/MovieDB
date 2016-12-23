@@ -6,8 +6,6 @@
     android:name="com.tmdb.moviedb.controller.MovieListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:divider="@color/movieListDivider"
-    android:dividerHeight="1dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.tmdb.moviedb.controller.MovieListFragment"
     tools:listitem="@layout/row_fragment_movie" />
