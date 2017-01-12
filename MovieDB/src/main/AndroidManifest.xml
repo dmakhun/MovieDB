@@ -14,13 +14,11 @@
         <activity android:name="com.tmdb.moviedb.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="com.package.name.MyActivity" />
+                <action android:name="com.tmdb.moviedb.MainActivity" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
         </activity>
     </application>
-
-
 </manifest>

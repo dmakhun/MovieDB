@@ -36,12 +36,14 @@ public class MovieListFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
     private OnFragmentInteractionListener mListener;
-    private List<MovieDb> popularList = new ArrayList<>();
+    private List<MovieDb> movieList = new ArrayList<>();
     private static int i = 1;
     MovieListRecyclerAdapter adapter;
 
     private boolean loading = false;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private String title;
+    private String currentList;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -77,7 +79,7 @@ public class MovieListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
-        adapter = new MovieListRecyclerAdapter(popularList, mListener);
+        adapter = new MovieListRecyclerAdapter(movieList, mListener);
         // Set the adapter
         if (view instanceof RecyclerView) {
             final Context context = view.getContext();
@@ -103,7 +105,7 @@ public class MovieListFragment extends Fragment {
                     }
                 }
             });
-            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), // separator
                     linearLayoutManager.getOrientation());
             recyclerView.addItemDecoration(dividerItemDecoration);
         }
@@ -114,12 +116,12 @@ public class MovieListFragment extends Fragment {
         if (!loading) {
             if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                 loading = true;
-                final MovieListAsyncTask listAsyncTask = new MovieListAsyncTask();
+                final MovieListAsyncTask movieListAsyncTask = new MovieListAsyncTask();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            listAsyncTask.execute(i += 1).get();
+                            movieListAsyncTask.execute(i += 1).get();
                             loading = false;
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
@@ -151,9 +153,25 @@ public class MovieListFragment extends Fragment {
         @Override
         protected String doInBackground(Integer... i) {
             TmdbMovies movies = new TmdbApi(MDB.API_KEY).getMovies();
-            MovieResultsPage movieResultsPage = movies.getPopularMovies(MDB.LANGUAGE_DEFAULT, i[0]);
+            MovieResultsPage movieResultsPage;
+            switch (getCurrentList()!= null ? getCurrentList() : "popular") {
+                case "popular":
+                    movieResultsPage = movies.getPopularMovies(MDB.LANGUAGE_DEFAULT, i[0]);
+                    break;
+                case "now_playing":
+                    movieResultsPage = movies.getNowPlayingMovies(MDB.LANGUAGE_DEFAULT, i[0]);
+                    break;
+                case "upcoming":
+                    movieResultsPage = movies.getUpcoming(MDB.LANGUAGE_DEFAULT, i[0]);
+                    break;
+                case "top_rated":
+                    movieResultsPage = movies.getTopRatedMovies(MDB.LANGUAGE_DEFAULT, i[0]);
+                    break;
+                default:
+                    movieResultsPage = movies.getPopularMovies(MDB.LANGUAGE_DEFAULT, i[0]);
+            }
             if (movieResultsPage != null) {
-                popularList.addAll(movieResultsPage.getResults());
+                movieList.addAll(movieResultsPage.getResults());
             }
             return null;
         }
@@ -167,5 +185,24 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    /**
+     * Update the title. We use this method to save our title and then to set it on the Toolbar.
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setCurrentList(String currentList) {
+        this.currentList = currentList;
+    }
+
+    public String getCurrentList() {
+        return currentList;
     }
 }

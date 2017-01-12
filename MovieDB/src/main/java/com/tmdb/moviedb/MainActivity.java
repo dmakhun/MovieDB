@@ -2,10 +2,8 @@ package com.tmdb.moviedb;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,11 +16,10 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.tmdb.moviedb.controller.MovieDetailsFragment;
 import com.tmdb.moviedb.controller.MovieListFragment;
+import com.tmdb.moviedb.controller.MovieSlideTab;
 import com.tmdb.moviedb.controller.OnFragmentInteractionListener;
 
 import java.io.File;
-
-import info.movito.themoviedbapi.model.MovieDb;
 
 /**
  * Created by Dima on 05.01.2016.
@@ -32,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     private MovieListFragment movieListFragment = new MovieListFragment();
     private MovieDetailsFragment movieDetailsFragment = new MovieDetailsFragment();
     private Toolbar toolbar;
+    private int currentMovViewPagerPos;
+    private MovieSlideTab movieSlideTab = new MovieSlideTab();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +44,10 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         loadImageOptions();
 
-        displayView("MovieListFragment", 1);
+//        displayView(1);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.frame_container, movieSlideTab).addToBackStack(null).commit();
     }
 
     private void loadImageOptions() {
@@ -67,10 +69,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         ImageLoader.getInstance().init(config);
     }
 
-    private void displayView(String tag, int position) {
+    private void displayView(int position) {
         if (position != 0) {
             FragmentManager fragmentManager = getFragmentManager();
-//            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             Fragment fragment = null;
 
             switch (position) {
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             }
 
             if (fragment != null) {
-                fragmentManager.beginTransaction().replace(R.id.frame_container, fragment).addToBackStack(tag).commit();
+                fragmentManager.beginTransaction().replace(R.id.frame_container, fragment).addToBackStack(null).commit();
             }
         }
     }
@@ -91,21 +92,26 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     public void onFragmentInteraction(String tag, Object data) {
         if (tag.equals("MovieDetailsFragment")) {
-            FragmentManager manager = getFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.frame_container, movieDetailsFragment);
-            transaction.addToBackStack("MovieDetailsFragment");
-            transaction.commit();
+            displayView(2);
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager.getBackStackEntryCount() != 0) {
-            fragmentManager.popBackStack();
-        } else {
-            super.onBackPressed();
-        }
+    /**
+     * Returns the MovieSlideTab Fragment. This is the ViewPager parent for the MovieList.
+     */
+    public MovieSlideTab getMovieSlideTab() {
+        return movieSlideTab;
+    }
+
+    public void setMovieSlideTab(MovieSlideTab movieSlideTab) {
+        this.movieSlideTab = movieSlideTab;
+    }
+
+    public int getCurrentMovViewPagerPos() {
+        return currentMovViewPagerPos;
+    }
+
+    public void setCurrentMovViewPagerPos(int currentMovViewPagerPos) {
+        this.currentMovViewPagerPos = currentMovViewPagerPos;
     }
 }

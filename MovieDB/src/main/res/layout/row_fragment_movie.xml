@@ -24,13 +24,14 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textAppearance="?attr/textAppearanceListItem" />
+            android:textColor="@color/movieListRowTitle"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/releaseDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceListItem" />
+            android:textColor="@color/movieListRowSub" />
 
     </LinearLayout>
 
