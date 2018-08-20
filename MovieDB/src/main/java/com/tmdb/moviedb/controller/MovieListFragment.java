@@ -42,6 +42,7 @@ public class MovieListFragment extends Fragment {
 
     private boolean loading = false;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private int visibleThreshold = 5;
     private String title;
     private String currentList;
 
@@ -75,6 +76,11 @@ public class MovieListFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
@@ -99,9 +105,17 @@ public class MovieListFragment extends Fragment {
 
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
+
                     if (dy > 0) { //check for scroll down
-                        updateList();
+                        visibleItemCount = recyclerView.getChildCount();
+                        totalItemCount = linearLayoutManager.getItemCount();
+                        pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
+                        if (!loading && (totalItemCount - visibleItemCount) <= (pastVisiblesItems +
+                                visibleThreshold)) {
+                            loading = true;
+                            updateList();
+                        }
+
                     }
                 }
             });
@@ -113,23 +127,18 @@ public class MovieListFragment extends Fragment {
     }
 
     private void updateList() {
-        if (!loading) {
-            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                loading = true;
-                final MovieListAsyncTask movieListAsyncTask = new MovieListAsyncTask();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            movieListAsyncTask.execute(i += 1).get();
-                            loading = false;
-                        } catch (ExecutionException | InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+        final MovieListAsyncTask movieListAsyncTask = new MovieListAsyncTask();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    movieListAsyncTask.execute(i += 1).get();
+                    loading = false;
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        }
+        }).start();
     }
 
     @Override
@@ -154,15 +163,15 @@ public class MovieListFragment extends Fragment {
         protected String doInBackground(Integer... i) {
             TmdbMovies movies = new TmdbApi(MDB.API_KEY).getMovies();
             MovieResultsPage movieResultsPage;
-            switch (getCurrentList()!= null ? getCurrentList() : "popular") {
+            switch (getCurrentList() != null ? getCurrentList() : "popular") {
                 case "popular":
                     movieResultsPage = movies.getPopularMovies(MDB.LANGUAGE_DEFAULT, i[0]);
                     break;
                 case "now_playing":
-                    movieResultsPage = movies.getNowPlayingMovies(MDB.LANGUAGE_DEFAULT, i[0]);
+                    movieResultsPage = movies.getNowPlayingMovies(MDB.LANGUAGE_DEFAULT, i[0], "");
                     break;
                 case "upcoming":
-                    movieResultsPage = movies.getUpcoming(MDB.LANGUAGE_DEFAULT, i[0]);
+                    movieResultsPage = movies.getUpcoming(MDB.LANGUAGE_DEFAULT, i[0], "");
                     break;
                 case "top_rated":
                     movieResultsPage = movies.getTopRatedMovies(MDB.LANGUAGE_DEFAULT, i[0]);

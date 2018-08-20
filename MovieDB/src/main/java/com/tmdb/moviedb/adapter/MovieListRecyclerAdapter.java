@@ -94,9 +94,9 @@ public class MovieListRecyclerAdapter extends RecyclerView.Adapter<MovieListRecy
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            movieTitle = (TextView) view.findViewById(R.id.movieTitle);
-            releaseDate = (TextView) view.findViewById(R.id.releaseDate);
-            posterPath = (ImageView) view.findViewById(R.id.posterPath);
+            movieTitle = view.findViewById(R.id.movieTitle);
+            releaseDate = view.findViewById(R.id.releaseDate);
+            posterPath = view.findViewById(R.id.posterPath);
         }
     }
 }
