@@ -25,6 +25,11 @@ import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.MovieResultsPage;
 
+import static com.tmdb.moviedb.MDB.API_KEY;
+import static com.tmdb.moviedb.MDB.LANGUAGE_DEFAULT;
+import static info.movito.themoviedbapi.TmdbMovies.MovieMethod.*;
+
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -128,17 +133,12 @@ public class MovieListFragment extends Fragment {
 
     private void updateList() {
         final MovieListAsyncTask movieListAsyncTask = new MovieListAsyncTask();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    movieListAsyncTask.execute(i += 1).get();
-                    loading = false;
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        try {
+            movieListAsyncTask.execute(++i).get();
+            loading = false;
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -161,23 +161,25 @@ public class MovieListFragment extends Fragment {
     class MovieListAsyncTask extends AsyncTask<Integer, Void, String> {
         @Override
         protected String doInBackground(Integer... i) {
-            TmdbMovies movies = new TmdbApi(MDB.API_KEY).getMovies();
+            TmdbMovies movies = new TmdbApi(API_KEY).getMovies();
+//            movies.getMovie(78, "en", credits, images, similar);
+
             MovieResultsPage movieResultsPage;
-            switch (getCurrentList() != null ? getCurrentList() : "popular") {
+            switch (getCurrentList()) {
                 case "popular":
-                    movieResultsPage = movies.getPopularMovies(MDB.LANGUAGE_DEFAULT, i[0]);
+                    movieResultsPage = movies.getPopularMovies(LANGUAGE_DEFAULT, i[0]);
                     break;
                 case "now_playing":
-                    movieResultsPage = movies.getNowPlayingMovies(MDB.LANGUAGE_DEFAULT, i[0], "");
+                    movieResultsPage = movies.getNowPlayingMovies(LANGUAGE_DEFAULT, i[0], "");
                     break;
                 case "upcoming":
-                    movieResultsPage = movies.getUpcoming(MDB.LANGUAGE_DEFAULT, i[0], "");
+                    movieResultsPage = movies.getUpcoming(LANGUAGE_DEFAULT, i[0], "");
                     break;
                 case "top_rated":
-                    movieResultsPage = movies.getTopRatedMovies(MDB.LANGUAGE_DEFAULT, i[0]);
+                    movieResultsPage = movies.getTopRatedMovies(LANGUAGE_DEFAULT, i[0]);
                     break;
                 default:
-                    movieResultsPage = movies.getPopularMovies(MDB.LANGUAGE_DEFAULT, i[0]);
+                    movieResultsPage = movies.getPopularMovies(LANGUAGE_DEFAULT, i[0]);
             }
             if (movieResultsPage != null) {
                 movieList.addAll(movieResultsPage.getResults());

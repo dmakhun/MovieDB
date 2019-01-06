@@ -51,9 +51,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     }
 
     private void loadImageOptions() {
-        // Universal Loader options and configuration.
         DisplayImageOptions options = new DisplayImageOptions.Builder()
-                // Bitmaps in RGB_565 consume 2 times less memory than in ARGB_8888.
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .imageScaleType(ImageScaleType.EXACTLY)
                 .cacheInMemory(false)
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         File cacheDir = StorageUtils.getCacheDirectory(context);
         // Create global configuration and initialize ImageLoader with this config
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                .diskCache(new UnlimitedDiskCache(cacheDir)) // default
+                .diskCache(new UnlimitedDiskCache(cacheDir))
                 .defaultDisplayImageOptions(options)
                 .build();
         ImageLoader.getInstance().init(config);

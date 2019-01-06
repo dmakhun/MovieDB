@@ -2,6 +2,7 @@ package com.tmdb.moviedb.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +14,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.tmdb.moviedb.MDB;
-import com.tmdb.moviedb.controller.OnFragmentInteractionListener;
 import com.tmdb.moviedb.R;
+import com.tmdb.moviedb.controller.OnFragmentInteractionListener;
 
 import java.util.List;
 
@@ -37,14 +38,9 @@ public class MovieListRecyclerAdapter extends RecyclerView.Adapter<MovieListRecy
 
         imageLoader = ImageLoader.getInstance();
         options = new DisplayImageOptions.Builder()
-                // Bitmaps in RGB_565 consume 2 times less memory than in ARGB_8888. Caching images in memory else
-                // flicker while toolbar hiding
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .imageScaleType(ImageScaleType.EXACTLY)
                 .cacheInMemory(true)
-                .showImageOnLoading(null)
-                .showImageForEmptyUri(null)
-                .showImageOnFail(null)
                 .cacheOnDisk(true)
                 .build();
     }
@@ -59,10 +55,11 @@ public class MovieListRecyclerAdapter extends RecyclerView.Adapter<MovieListRecy
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        position = getItemViewType(position);
         holder.movieDb = moviesList.get(position);
-        holder.movieTitle.setText(moviesList.get(position).getOriginalTitle());
-        holder.releaseDate.setText(moviesList.get(position).getReleaseDate().substring(0, 4));
-        imageLoader.displayImage(createImageURI(position), holder.posterPath, options);
+        holder.movieTitle.setText(holder.movieDb.getOriginalTitle());
+        holder.releaseDate.setText(holder.movieDb.getReleaseDate().substring(0, 4));
+        imageLoader.displayImage(createImageURI(holder.movieDb), holder.posterPath, options);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,8 +72,8 @@ public class MovieListRecyclerAdapter extends RecyclerView.Adapter<MovieListRecy
         });
     }
 
-    private String createImageURI(int position) {
-        return MDB.imageUrl + context.getResources().getString(R.string.imageSize) + moviesList.get(position).getPosterPath();
+    private String createImageURI(MovieDb movieDb) {
+        return MDB.imageUrl + context.getResources().getString(R.string.imageSize) + movieDb.getPosterPath();
     }
 
     @Override
@@ -86,10 +83,10 @@ public class MovieListRecyclerAdapter extends RecyclerView.Adapter<MovieListRecy
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
+        public MovieDb movieDb;
         public final TextView movieTitle;
         public final TextView releaseDate;
         public ImageView posterPath;
-        public MovieDb movieDb;
 
         public ViewHolder(View view) {
             super(view);
@@ -99,4 +96,16 @@ public class MovieListRecyclerAdapter extends RecyclerView.Adapter<MovieListRecy
             posterPath = view.findViewById(R.id.posterPath);
         }
     }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull ViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.posterPath.setImageDrawable(null);
+    }
+
 }
